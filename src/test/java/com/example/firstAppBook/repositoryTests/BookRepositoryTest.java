@@ -1,11 +1,14 @@
-package com.example.firstAppBook.Repository;
-import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+package com.example.firstAppBook.repositoryTests;
+
 import com.example.firstAppBook.Entity.Book;
+import com.example.firstAppBook.Repository.BookRepository;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
 import java.util.Optional;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataMongoTest
 public class BookRepositoryTest {
@@ -15,7 +18,7 @@ public class BookRepositoryTest {
     @Test
     void testSaveAndFindBook() {
         Book book = new Book();
-        book.setId("1");
+        book.setId(1L);
         book.setTitle("JUnit in Action");
         book.setAuthor("Smith");
 

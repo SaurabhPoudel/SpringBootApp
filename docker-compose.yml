@@ -1,23 +1,30 @@
 services:
-  postgres:
-    image: postgres:16
-    container_name: postgres_db
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydb
+  postgres-db:
+    image: postgres:14
+    container_name: my-postgres
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: my-user
+      POSTGRES_PASSWORD: user-password
+      POSTGRES_DB: my-db
 
-  mongodb:
-    image: mongo:7
-    container_name: mongo_db
+  postgres-client:
+    image: postgres:14
+    container_name: psql-client
+    depends_on:
+      - postgres-db
+    entrypoint: [ "tail", "-f", "/dev/null" ]
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: my-pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
     ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
+      - "5050:80"
 
   redis:
     image: redis:7
@@ -30,16 +37,14 @@ services:
       context: ./
     container_name: springboot_app
     depends_on:
-      - postgres
-      - mongodb
+      - postgres-db
       - redis
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mydb
-      SPRING_DATASOURCE_USERNAME: user
-      SPRING_DATASOURCE_PASSWORD: password
-      SPRING_DATA_MONGODB_URI: mongodb://mongo_db:27017/test
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/my-db
+      SPRING_DATASOURCE_USERNAME: my-user
+      SPRING_DATASOURCE_PASSWORD: user-password
       SPRING_REDIS_HOST: redis_cache
       SPRING_REDIS_PORT: 6379
 
@@ -55,4 +60,4 @@ services:
 
 volumes:
   postgres_data:
-  mongo_data:
+    driver: local

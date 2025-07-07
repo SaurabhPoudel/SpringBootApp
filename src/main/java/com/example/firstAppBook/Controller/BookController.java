@@ -1,9 +1,7 @@
 package com.example.firstAppBook.Controller;
 
 import com.example.firstAppBook.Entity.Book;
-import com.example.firstAppBook.Repository.BookRepository;
 import com.example.firstAppBook.Service.BookService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

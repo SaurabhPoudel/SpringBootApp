@@ -1,4 +1,5 @@
 {
+  "proxy": "http://localhost:8080",
   "name": "react-frontend",
   "version": "0.1.0",
   "private": true,
@@ -13,6 +14,7 @@
     "axios": "^1.10.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.3",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },

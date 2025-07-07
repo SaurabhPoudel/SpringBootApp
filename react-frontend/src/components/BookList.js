@@ -14,7 +14,7 @@ const BookList = () => {
   });
 
   useEffect(() => {
-    axiosInstance.get('/')
+    axiosInstance.get('')
       .then(response => setBooks(response.data))
       .catch(error => console.error('Error fetching books:', error));
   }, []);

@@ -2,6 +2,8 @@ package com.example.firstAppBook.Entity;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "books")
 public class Book {
@@ -13,6 +15,20 @@ public class Book {
     private String author;
     private String isbn;
     private int publicationYear;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "book_authors",
+        joinColumns = @JoinColumn(name = "book_id"),
+        inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private Set<Author> authors;
+
+    @ManyToOne
+    @JoinColumn(name = "publisher_id", nullable = false)
+    private Publisher publisher;
+
+
 
     // Getters and setters
     public Long getId() { return id; }
@@ -31,5 +47,29 @@ public class Book {
     }
     public void setIsbn(String isbn) {
         this.isbn = isbn;
+    }
+    public Set<Author> getAuthors() {
+        return authors;
+    }
+    public void setAuthors(Set<Author> authors) {
+        this.authors = authors;
+    }
+    public Publisher getPublisher() {
+        return publisher;
+    }
+    public void setPublisher(Publisher publisher) {
+        this.publisher = publisher;
+    }
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", publicationYear=" + publicationYear +
+                ", authors=" + authors +
+                ", publisher=" + publisher +
+                '}';
     }
 }

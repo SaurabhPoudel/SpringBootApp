@@ -37,7 +37,7 @@ const BookForm = () => {
     e.preventDefault();
     const request = id
       ? axiosInstance.put(`/${id}`, book)
-      : axiosInstance.post('/', book);
+      : axiosInstance.post('/add', book);
 
     request
       .then(() => navigate('/'))

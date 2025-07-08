@@ -1,5 +1,5 @@
 {
-  "proxy": "http://18.134.163.221:7070",
+  "proxy": "http://18.134.163.221:8181",
   "name": "react-frontend",
   "version": "0.1.0",
   "private": true,

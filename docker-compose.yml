@@ -40,7 +40,7 @@ services:
       - postgres-db
       - redis
     ports:
-      - "8080:8080"
+      - "7070:7070"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/my-db
       SPRING_DATASOURCE_USERNAME: my-user

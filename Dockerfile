@@ -11,5 +11,6 @@ RUN mvn install -DskipTests
 FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/spring-boot-app-0.0.1-SNAPSHOT.jar app.jar
-EXPOSE 7070
+EXPOSE 8181
 ENTRYPOINT ["java", "-jar", "app.jar"]
+

@@ -3,7 +3,7 @@ services:
     build: .
     container_name: java17_app
     ports:
-      - "8181:8181"
+      - "9080:9080"
     restart: unless-stopped
     
   postgres-db:

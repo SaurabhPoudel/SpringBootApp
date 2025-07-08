@@ -1,14 +1,4 @@
 services:
-  postgres-db:
-    image: postgres:14
-    container_name: my-postgres
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: my-user
-      POSTGRES_PASSWORD: user-password
-      POSTGRES_DB: my-db
-
   postgres-client:
     image: postgres:14
     container_name: psql-client

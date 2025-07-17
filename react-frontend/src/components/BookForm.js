@@ -1,96 +1,81 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { TextField, Button, Paper, Typography, Box, IconButton } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
-const BookForm = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [book, setBook] = useState({
-    title: '',
-    author: '',
-    isbn: '',
-    publicationYear: ''
-  });
+const BookForm = ({ onBookAdded }) => {
+  const [title, setTitle] = useState('');
+  const [isbn, setIsbn] = useState('');
+  const [publicationYear, setPublicationYear] = useState('');
+  const [publisherName, setPublisherName] = useState('');
+  const [authors, setAuthors] = useState([{ name: '' }]);
 
-  // Configure axios with Basic Auth
-  const axiosInstance = axios.create({
-    baseURL: '/api/books',
-    headers: {
-      Authorization: 'Basic ' + btoa('admin:password'), // Encode username:password
-    },
-  });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const bookData = {
+      title,
+      isbn,
+      publicationYear: parseInt(publicationYear),
+      publisher: { name: publisherName },
+      authors
+    };
 
-  useEffect(() => {
-    if (id) {
-      axiosInstance.get(`/${id}`)
-        .then(response => setBook(response.data))
-        .catch(error => console.error('Error fetching book:', error));
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:8080/api/books/add', bookData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      onBookAdded();
+      setTitle('');
+      setIsbn('');
+      setPublicationYear('');
+      setPublisherName('');
+      setAuthors([{ name: '' }]);
+    } catch (error) {
+      alert('Error adding book');
     }
-  }, [id]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setBook({ ...book, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const request = id
-      ? axiosInstance.put(`/${id}`, book)
-      : axiosInstance.post('/add', book);
+  const handleAuthorChange = (index, value) => {
+    const updatedAuthors = [...authors];
+    updatedAuthors[index].name = value;
+    setAuthors(updatedAuthors);
+  };
 
-    request
-      .then(() => navigate('/'))
-      .catch(error => console.error('Error saving book:', error));
+  const addAuthor = () => {
+    setAuthors([...authors, { name: '' }]);
   };
 
   return (
-    <div>
-      <h2>{id ? 'Edit Book' : 'Add Book'}</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title:</label>
-          <input
-            type="text"
-            name="title"
-            value={book.title}
-            onChange={handleChange}
+    <Paper elevation={2} sx={{ padding: 3, marginBottom: 4 }}>
+      <Typography variant="h6">Add Book</Typography>
+      <Box component="form" onSubmit={handleSubmit}>
+        <TextField fullWidth label="Title" margin="normal" value={title} onChange={e => setTitle(e.target.value)} required />
+        <TextField fullWidth label="ISBN" margin="normal" value={isbn} onChange={e => setIsbn(e.target.value)} required />
+        <TextField fullWidth label="Publication Year" margin="normal" value={publicationYear} onChange={e => setPublicationYear(e.target.value)} required />
+        <TextField fullWidth label="Publisher Name" margin="normal" value={publisherName} onChange={e => setPublisherName(e.target.value)} required />
+
+        <Typography variant="subtitle1" sx={{ mt: 2 }}>Authors</Typography>
+        {authors.map((author, index) => (
+          <TextField
+            key={index}
+            fullWidth
+            label={`Author ${index + 1}`}
+            margin="normal"
+            value={author.name}
+            onChange={e => handleAuthorChange(index, e.target.value)}
             required
           />
-        </div>
-        <div>
-          <label>Author:</label>
-          <input
-            type="text"
-            name="author"
-            value={book.author}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>ISBN:</label>
-          <input
-            type="text"
-            name="isbn"
-            value={book.isbn}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Publication Year:</label>
-          <input
-            type="number"
-            name="publicationYear"
-            value={book.publicationYear}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">Save</button>
-      </form>
-    </div>
+        ))}
+        <IconButton onClick={addAuthor} color="primary">
+          <AddIcon />
+        </IconButton>
+
+        <Button variant="contained" color="secondary" type="submit" sx={{ mt: 2 }}>Save Book</Button>
+      </Box>
+    </Paper>
   );
 };
 

@@ -1,13 +1,13 @@
 services:
   postgres-db:
-    image: postgres:14
-    container_name: my-postgres
-    ports:
+      image: postgres:14
+      container_name: my-postgres
+      ports:
       - "5432:5432"
-    environment:
-      POSTGRES_USER: my-user
-      POSTGRES_PASSWORD: user-password
-      POSTGRES_DB: my-db
+      environment:
+        POSTGRES_USER: my-user
+        POSTGRES_PASSWORD: user-password
+        POSTGRES_DB: my-db
 
   postgres-client:
     image: postgres:14
@@ -40,7 +40,7 @@ services:
       - postgres-db
       - redis
     ports:
-      - "8080:8080"
+      - "8181:8181"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/my-db
       SPRING_DATASOURCE_USERNAME: my-user
@@ -53,7 +53,7 @@ services:
       context: ./react-frontend
     container_name: react_frontend
     ports:
-      - "3000:80"
+      - "3000:81"
     depends_on:
       - springboot-app
 

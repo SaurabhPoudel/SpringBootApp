@@ -8,10 +8,14 @@ spring:
     username: my-user
     password: user-password
     driver-class-name: org.postgresql.Driver
-
+  jackson:
+    time-zone: UTC
 # CORS config should be at root level, not inside spring:
 cors:
   allowed-origins: [ "*" ]
   allowed-methods: [ "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD" ]
   allowed-headers: [ "*" ]
   allow-credentials: true
+
+jwt:
+  secret: ${JWT_SECRET:supersecretkeythatissupposedtobe32bytes!!}

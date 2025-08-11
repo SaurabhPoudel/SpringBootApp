@@ -46,5 +46,6 @@ public class PostgresDBsource implements Serializable,Cloneable {
         dataSource.setUsername("my-user");
         dataSource.setPassword("user-password");
         return dataSource;
-    }
+
+   }
 }

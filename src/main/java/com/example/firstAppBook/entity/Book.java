@@ -2,7 +2,6 @@ package com.example.firstAppBook.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,14 +24,18 @@ public class Book {
 
     private int publicationYear;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "publisher_id")
     private Publisher publisher;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinTable(name = "book_authors",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id"))
     @Builder.Default
     private Set<Author> authors = new HashSet<>();
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean available = true;
 }

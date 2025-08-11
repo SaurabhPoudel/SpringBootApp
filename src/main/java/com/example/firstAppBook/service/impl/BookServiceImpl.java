@@ -1,6 +1,7 @@
 package com.example.firstAppBook.service.impl;
 import com.example.firstAppBook.dto.BookDTO;
 import com.example.firstAppBook.dto.BookMapper;
+import com.example.firstAppBook.exception.ResourceNotFoundException;
 import com.example.firstAppBook.repository.BookRepository;
 import com.example.firstAppBook.service.BookService;
 import org.slf4j.Logger;
@@ -18,7 +19,6 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-    @Autowired
     private final BookMapper bookMapper;
     private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
@@ -41,7 +41,8 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDTO getBookById(Long id)
     {
-        Book book = bookRepository.findById(id).orElse(null);
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
         return bookMapper.toDTO(book);
         //ask here why we cant use bookMapper
     }
@@ -54,10 +55,11 @@ public class BookServiceImpl implements BookService {
         return bookMapper.toDTO(savedBook);
     }
     @Override
+    @Transactional
     public BookDTO updateBook(Long id, BookDTO bookDTO)
     {
         Book existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
 
         // Update values
         existingBook.setTitle(bookDTO.getTitle());
@@ -71,16 +73,20 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void deleteBook(Long id) {
+    public void deleteBook(Long id)
+    { if(!bookRepository.existsById(id)) {
+        throw new ResourceNotFoundException("Book not found with ID: " + id);
+    }
         bookRepository.deleteById(id);
     }
 
     @Override
     public Optional<BookDTO> findByPublisherName(String publisherName) {
-        return bookRepository.findByPublisherName(publisherName).stream()
-                .filter(e ->e.getPublisher().getName().equals(publisherName))
+        return Optional.ofNullable(bookRepository.findByPublisherName(publisherName).stream()
+                .filter(e -> e.getPublisher().getName().equals(publisherName))
                 .findFirst()
-                .map(bookMapper::toDTO);
+                .map(bookMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("No book found for publisher: " + publisherName)));
         //ask question here why we cant use bookMapper
 
 

@@ -2,6 +2,7 @@ package com.example.firstAppBook.controller;
 
 import com.example.firstAppBook.dto.BookDTO;
 import com.example.firstAppBook.service.BookService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
-//ResponseENtity is not used in this controller, so it can be removed
+//ResponseEntity is not used in this controller, so it can be removed
     @GetMapping
     public ResponseEntity<List<BookDTO>> getAllBooks()  {
         logger.info("getting all books");
@@ -50,10 +51,10 @@ public class BookController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<BookDTO> addBook(@RequestBody BookDTO book){
+    public ResponseEntity<BookDTO> addBook(@Valid @RequestBody BookDTO book){
         logger.info("Adding new book: {}", book.getTitle());
         BookDTO savedBook = bookService.saveBook(book);
-        return  new ResponseEntity<>(savedBook, HttpStatus.CREATED);
+        return  ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
     }
 
     @PutMapping("/{id}")
